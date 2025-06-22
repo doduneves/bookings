@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: bookings_db
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      PGPORT: ${PGPORT-5432}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $POSTGRES_USER -d $POSTGRES_DB']
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: booking_api
+    ports:
+      - "${API_PORT}:3001"
+    environment:
+      PORT: ${API_INTERNAL_PORT:-3001} 
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      JWT_SECRET: ${JWT_SECRET}
+    volumes:
+      - ./api/src:/app/src
+      - ./api/package.json:/app/package.json
+      - ./api/yarn.lock:/app/yarn.lock
+      - ./api/tsconfig.json:/app/tsconfig.json
+      - ./api/ormconfig.ts:/app/ormconfig.ts
+      - ./api/database:/app/database
+      - /app/node_modules
+    depends_on:
+      - db
+    restart: always
+    command: sh -c "yarn run migration:run && yarn run start:dev"
+
+volumes:
+  db_data:

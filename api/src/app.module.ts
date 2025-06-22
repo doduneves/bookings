@@ -1,18 +1,21 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { User } from './users/entities/user.entity';
+import { BookingsModule } from './bookings/bookings.module';
+import { RoomingListsModule } from './rooming-lists/rooming-lists.module';
+import { BookingEntity } from './bookings/entities/booking.entity';
+import { UserEntity } from './users/entities/user.entity';
+import { RoomingListEntity } from './rooming-lists/entities/rooming-list.entity';
 
 @Module({
   imports: [
-    // Load environment variables from api/.env
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
     }),
-    // TypeORM configuration for PostgreSQL with async setup for ConfigService
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -23,7 +26,7 @@ import { User } from './users/entities/user.entity';
         username: configService.get<string>('DB_USER'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        entities: [User], // Only include the User entity for now
+        entities: [BookingEntity, RoomingListEntity, UserEntity],
         synchronize: false,
         migrationsRun: false,
         migrations: [__dirname + '/../database/migrations/*.{ts,js}'],
@@ -33,9 +36,10 @@ import { User } from './users/entities/user.entity';
         logging: true,
       }),
     }),
-    // No other modules like AuthModule, BookingsModule etc. for now
+    BookingsModule,
+    RoomingListsModule,
   ],
-  controllers: [AppController], // Use the default AppController
-  providers: [AppService],     // Use the default AppService
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

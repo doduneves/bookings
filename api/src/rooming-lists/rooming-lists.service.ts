@@ -25,14 +25,14 @@ export class RoomingListsService {
 
   async findAll(): Promise<RoomingListEntity[]> {
     return this.roomingListsRepository.find({
-      relations: ['roomingListBookings'],
+      relations: ['bookings'],
     });
   }
 
   async findOne(roomingListId: string): Promise<RoomingListEntity> {
     const roomingList = await this.roomingListsRepository.findOne({
       where: { roomingListId },
-      relations: ['roomingListBookings'],
+      relations: ['bookings'],
     });
     if (!roomingList) {
       throw new NotFoundException(

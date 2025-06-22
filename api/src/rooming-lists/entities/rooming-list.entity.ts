@@ -25,7 +25,7 @@ export class RoomingListEntity {
   @Column('date')
   cutOffDate: Date;
 
-  @Column({ default: 'Active' })
+  @Column({ default: 'active' })
   status: string;
 
   @Column()

@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsUUID,
   IsString,
@@ -7,29 +8,35 @@ import {
 } from 'class-validator';
 
 export class CreateRoomingListDto {
+  @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
   eventId: string;
 
+  @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
   hotelId: string;
 
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   rfpName: string;
 
+  @ApiProperty()
   @IsDateString()
   @IsNotEmpty()
   cutOffDate: string;
 
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @IsIn(['Active', 'Closed', 'Cancelled'], {
-    message: 'Status must be Active, Closed, or Cancelled',
+  @IsIn(['active', 'closed', 'cancelled'], {
+    message: 'Status must be active, closed, or cancelled',
   })
   status: string;
 
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   @IsIn(['leisure', 'staff', 'artist'], {

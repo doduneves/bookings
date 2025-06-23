@@ -5,6 +5,14 @@ import { CreateRoomingListDto } from './dto/create-rooming-list.dto';
 import { UpdateRoomingListDto } from './dto/update-rooming-list.dto';
 import { RoomingListEntity } from './entities/rooming-list.entity';
 import { BookingEntity } from 'src/bookings/entities/booking.entity';
+import { PaginatedResponseDto } from 'src/common/dto/paginated-response.dto';
+import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
+import { paginate } from 'src/common/utils/pagination';
+
+interface RoomingListsByEvent {
+  eventId: number;
+  roomingLists: RoomingListEntity[];
+}
 
 @Injectable()
 export class RoomingListsService {
@@ -23,10 +31,31 @@ export class RoomingListsService {
     return this.roomingListsRepository.save(newRoomingList);
   }
 
-  async findAll(): Promise<RoomingListEntity[]> {
-    return this.roomingListsRepository.find({
-      relations: ['bookings'],
-    });
+  async findAll(
+    query: PaginationQueryDto,
+  ): Promise<PaginatedResponseDto<RoomingListEntity>> {
+    const { eventId, status, search } = query;
+    
+    const qb = this.roomingListsRepository
+      .createQueryBuilder('entity')
+      .leftJoinAndSelect('entity.bookings', 'bookings');
+
+    if (eventId) {
+      qb.andWhere('entity.eventId = :eventId', { eventId });
+    }
+
+    if (status) {
+      qb.andWhere('entity.status ILIKE :status', { status });
+    }
+
+    if (search) {
+      qb.andWhere(
+        `(entity.rfpName ILIKE :search OR entity.hotelId ILIKE :search)`,
+        { search: `%${search}%` },
+      );
+    }
+
+    return paginate(qb, query);
   }
 
   async findOne(roomingListId: string): Promise<RoomingListEntity> {
@@ -65,5 +94,33 @@ export class RoomingListsService {
         `Rooming List with ID ${roomingListId} not found`,
       );
     }
+  }
+
+  async findRoomingListsGroupedByEventId(): Promise<RoomingListsByEvent[]> {
+    const allRoomingLists = await this.roomingListsRepository.find({
+      relations: ['bookings'],
+      order: {
+        eventId: 'ASC',
+        createdAt: 'ASC',
+      },
+    });
+
+    const groupedData = new Map<number, RoomingListEntity[]>();
+
+    allRoomingLists.forEach((roomingList) => {
+      if (!groupedData.has(roomingList.eventId)) {
+        groupedData.set(roomingList.eventId, []);
+      }
+      groupedData.get(roomingList.eventId)?.push(roomingList);
+    });
+
+    const result: RoomingListsByEvent[] = Array.from(groupedData.entries()).map(
+      ([eventId, roomingLists]) => ({
+        eventId: eventId,
+        roomingLists: roomingLists,
+      }),
+    );
+
+    return result;
   }
 }

@@ -8,11 +8,15 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
+import { PaginatedResponseDto } from 'src/common/dto/paginated-response.dto';
+import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
+import { BookingEntity } from './entities/booking.entity';
 
 @ApiTags('bookings')
 @Controller('bookings')
@@ -34,11 +38,18 @@ export class BookingsController {
     return this.bookingsService.create(createBookingDto);
   }
 
+  // @Get()
+  // findAll() {
+  //   return this.bookingsService.findAll();
+  // }
+
   @Get()
   @ApiOperation({ summary: 'Retrieve all bookings' })
   @ApiResponse({ status: HttpStatus.OK, description: 'List of all bookings.' })
-  findAll() {
-    return this.bookingsService.findAll();
+  async findAll(
+    @Query() query: PaginationQueryDto,
+  ): Promise<PaginatedResponseDto<BookingEntity>> {
+    return this.bookingsService.findAll(query);
   }
 
   @Get(':id')

@@ -8,12 +8,16 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 
 import { RoomingListsService } from './rooming-lists.service';
 import { CreateRoomingListDto } from './dto/create-rooming-list.dto';
 import { UpdateRoomingListDto } from './dto/update-rooming-list.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { RoomingListEntity } from './entities/rooming-list.entity';
+import { PaginatedResponseDto } from 'src/common/dto/paginated-response.dto';
+import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 
 @ApiTags('rooming-lists')
 @Controller('rooming-lists')
@@ -41,8 +45,10 @@ export class RoomingListsController {
     status: HttpStatus.OK,
     description: 'List of all rooming lists.',
   })
-  findAll() {
-    return this.roomingListsService.findAll();
+  async findAll(
+    @Query() query: PaginationQueryDto,
+  ): Promise<PaginatedResponseDto<RoomingListEntity>> {
+    return this.roomingListsService.findAll(query);
   }
 
   @Get(':id')
@@ -107,4 +113,5 @@ export class RoomingListsController {
   remove(@Param('id') id: string) {
     return this.roomingListsService.remove(id);
   }
+
 }

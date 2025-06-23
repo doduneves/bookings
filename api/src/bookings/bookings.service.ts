@@ -12,6 +12,9 @@ import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
 import { RoomingListsService } from 'src/rooming-lists/rooming-lists.service';
 import { RoomingListEntity } from 'src/rooming-lists/entities/rooming-list.entity';
+import { PaginatedResponseDto } from 'src/common/dto/paginated-response.dto';
+import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
+import { paginate } from 'src/common/utils/pagination';
 
 @Injectable()
 export class BookingsService {
@@ -34,7 +37,11 @@ export class BookingsService {
         );
       }
 
-      this.validateBookingRoomingListConsistency(createBookingDto.hotelId, createBookingDto.eventId, roomingList);
+      this.validateBookingRoomingListConsistency(
+        createBookingDto.hotelId,
+        createBookingDto.eventId,
+        roomingList,
+      );
 
       newBooking.roomingLists = [roomingList];
     }
@@ -43,8 +50,14 @@ export class BookingsService {
     return savedBooking;
   }
 
-  async findAll(): Promise<BookingEntity[]> {
-    return this.bookingsRepository.find({ relations: ['roomingLists'] });
+  async findAll(
+    query: PaginationQueryDto,
+  ): Promise<PaginatedResponseDto<BookingEntity>> {
+    const qb = this.bookingsRepository
+      .createQueryBuilder('entity')
+      .leftJoinAndSelect('entity.roomingLists', 'roomingList');
+
+    return paginate(qb, query);
   }
 
   async findOne(bookingId: string): Promise<BookingEntity> {
@@ -72,9 +85,13 @@ export class BookingsService {
 
     let targetRoomingList: RoomingListEntity | undefined;
     if (updateBookingDto.roomingListId) {
-      targetRoomingList = await this.roomingListsService.findOne(updateBookingDto.roomingListId);
+      targetRoomingList = await this.roomingListsService.findOne(
+        updateBookingDto.roomingListId,
+      );
       if (!targetRoomingList) {
-        throw new NotFoundException(`Rooming List with ID ${updateBookingDto.roomingListId} not found.`);
+        throw new NotFoundException(
+          `Rooming List with ID ${updateBookingDto.roomingListId} not found.`,
+        );
       }
     } else if (booking.roomingLists && booking.roomingLists.length > 0) {
       targetRoomingList = booking.roomingLists[0];
@@ -84,7 +101,11 @@ export class BookingsService {
     const currentEventId = updateBookingDto.eventId ?? booking.eventId;
 
     if (targetRoomingList) {
-      this.validateBookingRoomingListConsistency(currentHotelId, currentEventId, targetRoomingList);
+      this.validateBookingRoomingListConsistency(
+        currentHotelId,
+        currentEventId,
+        targetRoomingList,
+      );
     }
 
     return this.bookingsRepository.save(booking);

@@ -1,17 +1,17 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class InitialSchemaApp1750627521705 implements MigrationInterface {
-  name = 'InitialSchemaApp1750627521705';
+export class InitSchemaApp1750636202467 implements MigrationInterface {
+  name = 'InitSchemaApp1750636202467';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `CREATE TABLE "users" ("userId" character varying NOT NULL, "username" character varying NOT NULL, "password" character varying NOT NULL, "email" character varying, "role" character varying NOT NULL DEFAULT 'user', CONSTRAINT "UQ_fe0bb3f6520ee0469504521e710" UNIQUE ("username"), CONSTRAINT "PK_8bf09ba754322ab9c22a215c919" PRIMARY KEY ("userId"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "roominglists" ("roomingListId" character varying NOT NULL, "eventId" character varying NOT NULL, "hotelId" character varying NOT NULL, "rfpName" character varying NOT NULL, "cutOffDate" date NOT NULL, "status" character varying NOT NULL DEFAULT 'Active', "agreement_type" character varying NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_7b683a825151e382d022977a04d" PRIMARY KEY ("roomingListId"))`,
+      `CREATE TABLE "roominglists" ("roomingListId" character varying NOT NULL, "eventId" integer NOT NULL, "hotelId" integer NOT NULL, "rfpName" character varying NOT NULL, "cutOffDate" date NOT NULL, "status" character varying NOT NULL DEFAULT 'active', "agreement_type" character varying NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_7b683a825151e382d022977a04d" PRIMARY KEY ("roomingListId"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "bookings" ("bookingId" character varying NOT NULL, "hotelId" character varying NOT NULL, "eventId" character varying NOT NULL, "guestName" character varying NOT NULL, "guestPhoneNumber" character varying NOT NULL, "checkInDate" date NOT NULL, "checkOutDate" date NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_35a5c2c23622676b102ccc3b113" PRIMARY KEY ("bookingId"))`,
+      `CREATE TABLE "bookings" ("bookingId" character varying NOT NULL, "hotelId" integer NOT NULL, "eventId" integer NOT NULL, "guestName" character varying NOT NULL, "guestPhoneNumber" character varying NOT NULL, "checkInDate" date NOT NULL, "checkOutDate" date NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_35a5c2c23622676b102ccc3b113" PRIMARY KEY ("bookingId"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "rooming_list_bookings" ("booking_id" character varying NOT NULL, "rooming_list_id" character varying NOT NULL, CONSTRAINT "PK_d8ecc50f452e2fa849d125d3c04" PRIMARY KEY ("booking_id", "rooming_list_id"))`,

@@ -7,12 +7,12 @@ export class BookingEntity {
   @PrimaryColumn('varchar')
   bookingId: string;
 
-  @Column()
-  hotelId: string;
+  @Column('int')
+  hotelId: number;
 
-  @Column()
-  eventId: string;
-
+  @Column('int')
+  eventId: number;
+  
   @Column()
   guestName: string;
 
@@ -49,9 +49,4 @@ export class BookingEntity {
     },
   })
   roomingLists: RoomingListEntity[];
-
-  @BeforeInsert()
-  generateId() {
-    this.bookingId = `bkn_${ulid()}`;
-  }
 }

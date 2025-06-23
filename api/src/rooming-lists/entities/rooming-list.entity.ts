@@ -13,11 +13,11 @@ export class RoomingListEntity {
   @PrimaryColumn({ type: 'varchar' })
   roomingListId: string;
 
-  @Column()
-  eventId: string;
+  @Column('int')
+  eventId: number;
 
-  @Column()
-  hotelId: string;
+  @Column('int')
+  hotelId: number;
 
   @Column()
   rfpName: string;
@@ -45,8 +45,4 @@ export class RoomingListEntity {
   @ManyToMany(() => BookingEntity, (booking) => booking.roomingLists)
   bookings: BookingEntity[];
 
-  @BeforeInsert()
-  generateId() {
-    this.roomingListId = `rml_${ulid()}`;
-  }
 }

@@ -6,18 +6,27 @@ import {
   IsDateString,
   IsOptional,
   IsUUID,
+  IsNumber,
 } from 'class-validator';
 
 export class CreateBookingDto {
-  @ApiProperty()
-  @IsUUID()
+  @ApiProperty({
+    description: 'The unique identifier of the hotel (from external system)',
+    example: 101,
+    type: 'number',
+  })
+  @IsNumber()
   @IsNotEmpty()
-  hotelId: string;
+  hotelId: number;
 
-  @ApiProperty()
-  @IsUUID()
+  @ApiProperty({
+    description: 'The unique identifier of the event associated with the booking (from external system)',
+    example: 1,
+    type: 'number',
+  })
+  @IsNumber()
   @IsNotEmpty()
-  eventId: string;
+  eventId: number;
 
   @ApiProperty()
   @IsString()
@@ -27,8 +36,6 @@ export class CreateBookingDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  // @IsPhoneNumber('US', { message: 'Must be a valid US phone number' })
-  @IsPhoneNumber('BR', { message: 'Must be a valid BR phone number' })
   guestPhoneNumber: string;
 
   @ApiProperty()

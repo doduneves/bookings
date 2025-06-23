@@ -1,22 +1,30 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsUUID,
   IsString,
   IsNotEmpty,
   IsDateString,
   IsIn,
+  IsNumber,
 } from 'class-validator';
 
 export class CreateRoomingListDto {
-  @ApiProperty()
-  @IsUUID()
+  @ApiProperty({
+    description: 'The unique identifier of the event (from external system)',
+    example: 1,
+    type: 'number',
+  })
+  @IsNumber()
   @IsNotEmpty()
-  eventId: string;
+  eventId: number;
 
-  @ApiProperty()
-  @IsUUID()
+  @ApiProperty({
+    description: 'The unique identifier of the hotel (from external system)',
+    example: 101,
+    type: 'number',
+  })
+  @IsNumber()
   @IsNotEmpty()
-  hotelId: string;
+  hotelId: number;
 
   @ApiProperty()
   @IsString()

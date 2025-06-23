@@ -42,6 +42,7 @@ docker-compose up --build
 ```
 
 3. Access API Documentation
+
 Once the API is running, you can test and explore the endpoints using the interactive Scalar documentation:
 
-Open your browser and go to: http://localhost:3001/api-docs
+Open your browser and go to: http://localhost:3001/docs

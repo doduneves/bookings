@@ -46,3 +46,12 @@ docker-compose up --build
 Once the API is running, you can test and explore the endpoints using the interactive Scalar documentation:
 
 Open your browser and go to: http://localhost:3001/docs
+
+
+
+4. Testing
+
+You can run the Unit Tests just running the script below, inside `api` folder:
+```
+yarn test
+```

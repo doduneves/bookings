@@ -18,12 +18,14 @@ import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { RoomingListEntity } from './entities/rooming-list.entity';
 import { PaginatedResponseDto } from 'src/common/dto/paginated-response.dto';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
+import { Auth } from 'src/auth/decorators/auth.decorator';
 
 @ApiTags('rooming-lists')
 @Controller('rooming-lists')
 export class RoomingListsController {
   constructor(private readonly roomingListsService: RoomingListsService) {}
 
+  @Auth()
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a new rooming list' })
@@ -69,6 +71,7 @@ export class RoomingListsController {
     return this.roomingListsService.findOne(id);
   }
 
+  @Auth()
   @Patch(':id')
   @ApiOperation({ summary: 'Update an existing rooming list by ID' })
   @ApiParam({
@@ -94,6 +97,7 @@ export class RoomingListsController {
     return this.roomingListsService.update(id, updateRoomingListDto);
   }
 
+  @Auth()
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete a rooming list by ID' })
@@ -113,5 +117,4 @@ export class RoomingListsController {
   remove(@Param('id') id: string) {
     return this.roomingListsService.remove(id);
   }
-
 }

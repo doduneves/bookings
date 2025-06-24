@@ -7,7 +7,27 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 export class SeedController {
   constructor(private readonly seedService: SeedService) {}
 
-  @Post('run-all')
+
+  @Post('run-users')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Populate the database with initial users set on env',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Database seeding completed successfully.',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Failed to seed the database.',
+  })
+  async runUsersSeed() {
+    await this.seedService.seedUser();
+    return { message: 'Users seeded successfully!' };
+  }
+
+
+  @Post('run-bookings')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Populate the database with initial data from JSON files',
@@ -20,9 +40,9 @@ export class SeedController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Failed to seed the database.',
   })
-  async runSeed() {
-    await this.seedService.seedDatabase();
-    return { message: 'Database seeded successfully!' };
+  async runBookingsSeed() {
+    await this.seedService.seedRoomingListAndBooking();
+    return { message: 'Rooming and Booking seeded successfully!' };
   }
 
   @Post('clear')
@@ -40,7 +60,7 @@ export class SeedController {
     description: 'Failed to clear the database.',
   })
   async clearDatabase() {
-    await this.seedService.clearDatabase();
+    await this.seedService.clearRoomingListAndBooking();
     return { message: 'Database cleared successfully!' };
   }
 }

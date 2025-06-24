@@ -17,12 +17,14 @@ import { UpdateBookingDto } from './dto/update-booking.dto';
 import { PaginatedResponseDto } from 'src/common/dto/paginated-response.dto';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 import { BookingEntity } from './entities/booking.entity';
+import { Auth } from 'src/auth/decorators/auth.decorator';
 
 @ApiTags('bookings')
 @Controller('bookings')
 export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
+  @Auth()
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a new booking' })
@@ -37,11 +39,6 @@ export class BookingsController {
   create(@Body() createBookingDto: CreateBookingDto) {
     return this.bookingsService.create(createBookingDto);
   }
-
-  // @Get()
-  // findAll() {
-  //   return this.bookingsService.findAll();
-  // }
 
   @Get()
   @ApiOperation({ summary: 'Retrieve all bookings' })
@@ -67,6 +64,7 @@ export class BookingsController {
     return this.bookingsService.findOne(id);
   }
 
+  @Auth()
   @Patch(':id')
   @ApiOperation({ summary: 'Update an existing booking by ID' })
   @ApiParam({
@@ -89,6 +87,7 @@ export class BookingsController {
     return this.bookingsService.update(id, updateBookingDto);
   }
 
+  @Auth()
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @HttpCode(HttpStatus.NO_CONTENT)

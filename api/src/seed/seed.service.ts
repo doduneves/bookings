@@ -10,22 +10,67 @@ import { readFileSync } from 'fs';
 import { BookingEntity } from '../bookings/entities/booking.entity';
 import { RoomingListEntity } from '../rooming-lists/entities/rooming-list.entity';
 import { UserEntity } from '../users/entities/user.entity';
+import { ConfigService } from '@nestjs/config';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class SeedService {
   private readonly logger = new Logger(SeedService.name);
+
+  private readonly seedUsername: string;
+  private readonly seedPassword: string;
+  private readonly seedEmail: string;
+
+  private readonly defaultUserRole = 'user';
 
   constructor(
     @InjectRepository(BookingEntity)
     private bookingRepository: Repository<BookingEntity>,
     @InjectRepository(RoomingListEntity)
     private roomingListRepository: Repository<RoomingListEntity>,
-  ) {}
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
+    private configService: ConfigService,
+  ) {
+    this.seedUsername = this.getRequiredEnv('SEED_USERNAME');
+    this.seedPassword = this.getRequiredEnv('SEED_USERPASSWORD');
+    this.seedEmail = this.getRequiredEnv('SEED_USEREMAIL');
+  }
 
-  async seedDatabase() {
-    this.logger.log('Starting database seeding...');
+  private getRequiredEnv(key: string): string {
+    const value = this.configService.get<string>(key);
+    if (!value) {
+      throw new Error(`Missing required environment variable: ${key}`);
+    }
+    return value;
+  }
+
+  async seedUser() {
     try {
-      await this.clearDatabase();
+      await this.clearUsers();
+
+      const hashedPassword = await bcrypt.hash(this.seedPassword, 10);
+
+      this.logger.log('Starting user seeding...');
+      const defaultUser = this.userRepository.create({
+        username: this.seedUsername,
+        password: hashedPassword,
+        email: this.seedEmail,
+        role: this.defaultUserRole,
+      });
+
+      await this.userRepository.save(defaultUser);
+      this.logger.log(`Seeded default user: ${this.seedUsername}`);
+    } catch (error) {
+      this.logger.error('Users seseding failed:', error.message, error.stack);
+      throw new InternalServerErrorException('Failed to seed the database.');
+    }
+  }
+
+  async seedRoomingListAndBooking() {
+    this.logger.log('Starting rooming and bookings seeding...');
+    try {
+      await this.clearRoomingListAndBooking();
 
       const roomingListsData = this.readJsonFile('rooming-lists.json');
       if (roomingListsData && roomingListsData.length > 0) {
@@ -92,14 +137,34 @@ export class SeedService {
         );
       }
 
-      this.logger.log('Database seeding completed.');
+      this.logger.log('Rooming List and Booking seeding completed.');
     } catch (error) {
-      this.logger.error('Database seeding failed:', error.message, error.stack);
+      this.logger.error(
+        'Rooming List and Booking seeding failed:',
+        error.message,
+        error.stack,
+      );
       throw new InternalServerErrorException('Failed to seed the database.');
     }
   }
 
-  async clearDatabase() {
+  async clearUsers() {
+    this.logger.log('Clearing existing users data...');
+    try {
+      const users = await this.userRepository.find();
+      await this.userRepository.remove(users);
+      this.logger.log('Cleared users tables.');
+    } catch (error) {
+      this.logger.error(
+        'Database clearing failed:',
+        error.message,
+        error.stack,
+      );
+      throw new InternalServerErrorException('Failed to clear database data.');
+    }
+  }
+
+  async clearRoomingListAndBooking() {
     this.logger.log('Clearing existing database data...');
     try {
       await this.bookingRepository.query('DELETE FROM rooming_list_bookings;');

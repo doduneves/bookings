@@ -32,6 +32,17 @@ async function bootstrap() {
       `http://localhost:${configService.get<number>('PORT') || 3001}`,
       'Local Development Server',
     )
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      'JWT-auth',
+    )
     .build();
 
   const document = () =>

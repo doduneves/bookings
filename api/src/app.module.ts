@@ -10,12 +10,14 @@ import { SeedModule } from './seed/seed.module';
 import { BookingEntity } from './bookings/entities/booking.entity';
 import { RoomingListEntity } from './rooming-lists/entities/rooming-list.entity';
 import { UserEntity } from './users/entities/user.entity';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: ['.env'],
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -40,6 +42,8 @@ import { UserEntity } from './users/entities/user.entity';
     BookingsModule,
     RoomingListsModule,
     SeedModule, 
+    UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

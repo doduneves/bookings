@@ -1,12 +1,12 @@
 import { AlertTriangle } from "lucide-react";
-import { useRoomingList } from "../contexts/RoomingListContext";
+import { useEventsData } from "../contexts/EventsDataContext";
 
 interface PageTitleProps {
   title: string;
 }
 
 export const PageTitle = ({ title }: PageTitleProps) => {
-  const { runSeedData } = useRoomingList();
+  const { runSeedData } = useEventsData();
   return (
     <div className="flex justify-between items-center p-4">
       <h1 className="text-4xl font-bold text-left text-brand-black mb-2">

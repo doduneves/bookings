@@ -1,14 +1,13 @@
 import { SearchFilter } from "./components/SearchFilter";
 import { EventList } from "./components/EventList";
 import { PageTitle } from "./components/PageTitle";
-import {
-  RoomingListProvider,
-  useRoomingList,
-} from "./contexts/RoomingListContext";
+import { useEventsData } from "./contexts/EventsDataContext";
+import { useRoomingListUI } from "./contexts/RoomingListUIContext";
+import { RoomingListProvider } from "./contexts/RoomingListProvider";
 
 function App() {
-  const { filteredEventsData, loading, error, appliedSearchText } =
-    useRoomingList();
+  const { loading, error } = useEventsData();
+  const { filteredEventsData, appliedSearchText } = useRoomingListUI();
 
   if (loading) {
     return (

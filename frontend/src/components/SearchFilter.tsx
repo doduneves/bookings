@@ -1,5 +1,5 @@
 import { SearchIcon } from "lucide-react";
-import { useRoomingList } from "../contexts/RoomingListContext";
+import { useRoomingListUI } from "../contexts/RoomingListUIContext";
 
 export const SearchFilter = () => {
   const {
@@ -10,7 +10,7 @@ export const SearchFilter = () => {
     handleSearchSubmit,
     setSortOrder,
     sortOrder,
-  } = useRoomingList();
+  } = useRoomingListUI();
 
   return (
     <div className="p-4 rounded-lg flex flex-col space-y-4 mb-8 md:flex-row md:space-y-0 md:space-x-4 md:justify-between md:items-center">

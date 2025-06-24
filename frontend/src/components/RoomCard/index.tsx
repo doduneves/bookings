@@ -70,12 +70,16 @@ export const RoomCard = ({ roomingListItem }: RoomItemProps) => {
           className="px-4 py-2 bg-brand-purple-medium-dark text-white rounded-md hover:bg-opacity-90 transition duration-300"
           onClick={handleViewBookingsClick}
         >
-          {" "}
           View Bookings ({numberOfBookings})
         </button>
-        <button className="p-2 bg-brand-white text-brand-purple-medium-dark border border-brand-purple-medium-dark rounded-md hover:bg-brand-purple-medium-dark hover:text-white transition duration-300 flex items-center justify-center">
-          <FileCheck2 />
-        </button>
+        <div className="relative group">
+          <button className="p-2 bg-brand-white text-brand-purple-medium-dark border border-brand-purple-medium-dark rounded-md hover:bg-brand-purple-medium-dark hover:text-white transition duration-300 flex items-center justify-center">
+            <FileCheck2 />
+          </button>
+          <span className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-brand-black rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap z-10">
+            Show Agreement as PDF
+          </span>
+        </div>
       </div>
     </div>
   );

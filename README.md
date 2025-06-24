@@ -30,7 +30,7 @@ DB_NAME=hotel_bookings
 JWT_SECRET=your_jwt_secret_key_very_secret_and_long
 ```
 
-2. Build and Run the Application
+2. Build the Application
 Navigate back to the project root directory (where docker-compose.yml is located):
 
 ```
@@ -42,7 +42,7 @@ To build the Docker images, run database migrations, and start all services, exe
 docker-compose up --build
 ```
 
-3. Running the Frontend APP
+## Running the Frontend APP
 
 The app will be running on `http://localhost:5173/` (or change the port to FE_PORT set on .env)
 
@@ -54,15 +54,24 @@ VITE_API_BASE_URL=http://localhost:3001 (the same port you set to backedn api on
 ![image](https://github.com/user-attachments/assets/4d7a7fec-1d37-47a9-a443-ae6993575fd9)
 
 
-4. Access API Documentation
+## Back-End
 
 Once the API is running, you can test and explore the endpoints using the interactive Scalar documentation:
 
 Open your browser and go to: http://localhost:3001/docs (or whatever the PORT you've set on environment)
 ![image](https://github.com/user-attachments/assets/0bf5cce5-b2af-4f2e-a330-8e9ca9b12daf)
 
+To run the authenticated endpoint you must set some env variables on ./api/.env:
 
-5. Testing
+```
+SEED_USERNAME=user
+SEED_USERPASSWORD=password
+SEED_USEREMAIL=email
+```
+
+And run the Users Seeds on the API Docs
+
+### Testing
 
 You can run the Unit Tests just running the script below, inside `api` folder:
 ```

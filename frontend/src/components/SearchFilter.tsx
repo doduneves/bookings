@@ -1,3 +1,4 @@
+import { SearchIcon } from "lucide-react";
 import { useRoomingList } from "../contexts/RoomingListContext";
 
 export const SearchFilter = () => {
@@ -33,10 +34,11 @@ export const SearchFilter = () => {
           <option value="Cancelled">Cancelled</option>
         </select>
         <button
-          className="px-6 py-2 bg-brand-purple-medium-dark text-white rounded-md hover:bg-opacity-90 transition duration-300 shadow-lg w-full md:w-auto"
+          className="flex gap-2 px-6 py-2 bg-brand-purple-medium-dark text-white rounded-md hover:bg-opacity-90 transition duration-300 shadow-lg w-full md:w-auto"
           onClick={handleSearchSubmit}
         >
-          Search / OK
+          <SearchIcon />
+          Search
         </button>
       </div>
 

@@ -5,6 +5,7 @@ import React, {
   useContext,
   useMemo,
   type ReactNode,
+  useCallback,
 } from "react";
 import type { RoomingListItem, EventData } from "../types";
 
@@ -18,8 +19,9 @@ interface RoomingListContextType {
   setFilterOption: (option: string) => void;
   handleSearchSubmit: () => void;
   appliedSearchText: string;
-  sortOrder: 'asc' | 'desc' | 'none';
-  setSortOrder: (order: 'asc' | 'desc' | 'none') => void;
+  sortOrder: "asc" | "desc" | "none";
+  setSortOrder: (order: "asc" | "desc" | "none") => void;
+  runSeedData: () => Promise<void>;
 }
 
 const RoomingListContext = createContext<RoomingListContextType | undefined>(
@@ -56,57 +58,89 @@ export const RoomingListProvider = ({ children }: RoomingListProviderProps) => {
 
   const eventsToDisplay = useMemo(() => EVENTS, []);
 
-  useEffect(() => {
-    const fetchAllEventsData = async () => {
-      setLoading(true);
-      setError(null);
-      const fetchedEvents: EventData[] = [];
+  const fetchAllEventsData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    const fetchedEvents: EventData[] = [];
 
-      if (!API_BASE_URL) {
-        setError(
-          "VITE_API_BASE_URL is not defined in your .env file in the /frontend directory."
-        );
-        setLoading(false);
-        return;
-      }
-
-      for (const eventConfig of eventsToDisplay) {
-        const { eventId, eventName } = eventConfig;
-        try {
-          const response = await fetch(
-            `${API_BASE_URL}/rooming-lists?eventId=${eventId}`
-          );
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          const responseData: { items: RoomingListItem[] } =
-            await response.json();
-          const data: RoomingListItem[] = responseData.items;
-
-          fetchedEvents.push({
-            id: eventId,
-            name: eventName,
-            roomingLists: data,
-          });
-        } catch (e) {
-          console.error(
-            `Failed to fetch rooming lists for eventId ${eventId}:`,
-            e
-          );
-          setError(`Failed to load data for Event ID ${eventId}.`);
-          fetchedEvents.push({
-            id: eventId,
-            name: `${eventName} (Failed to Load)`,
-            roomingLists: [],
-          });
-        }
-      }
-      setEventsData(fetchedEvents);
+    if (!API_BASE_URL) {
+      setError(
+        "VITE_API_BASE_URL is not defined in your .env file in the /frontend directory."
+      );
       setLoading(false);
-    };
+      return;
+    }
 
-    fetchAllEventsData();
+    for (const eventConfig of eventsToDisplay) {
+      const { eventId, eventName } = eventConfig;
+      try {
+        const response = await fetch(
+          `${API_BASE_URL}/rooming-lists?eventId=${eventId}`
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const responseData: { items: RoomingListItem[] } =
+          await response.json();
+        const data: RoomingListItem[] = responseData.items;
+
+        fetchedEvents.push({
+          id: eventId,
+          name: eventName,
+          roomingLists: data,
+        });
+      } catch (e) {
+        console.error(
+          `Failed to fetch rooming lists for eventId ${eventId}:`,
+          e
+        );
+        setError(`Failed to load data for Event ID ${eventId}.`);
+        fetchedEvents.push({
+          id: eventId,
+          name: `${eventName} (Failed to Load)`,
+          roomingLists: [],
+        });
+      }
+    }
+    setEventsData(fetchedEvents);
+    setLoading(false);
   }, [eventsToDisplay]);
+
+  useEffect(() => {
+    fetchAllEventsData();
+  }, [eventsToDisplay, fetchAllEventsData]);
+
+
+  const runSeedData = useCallback(async () => {
+    if (!API_BASE_URL) {
+      console.error('API_BASE_URL is not defined for seeding.');
+      alert('Error: API Base URL is not configured for seeding data.');
+      return;
+    }
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_BASE_URL}/seeds/run-bookings`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Seed API error! status: ${response.status} - ${errorData.message || 'Unknown error'}`);
+      }
+
+      const result = await response.json();
+      console.log('Seed data ran successfully:', result);
+      alert('Seed data generated successfully! Refreshing data...');
+      fetchAllEventsData(); 
+    } catch (e) {
+      console.error('Error running seed data:', e);
+      alert(`Failed to run seed data: ${e.message}. Please check your backend.`); 
+      setLoading(false);
+    }
+  }, [fetchAllEventsData]);
 
   const mapFilterToStatus = (filter: string): string | null => {
     switch (filter.toLowerCase()) {
@@ -202,6 +236,7 @@ export const RoomingListProvider = ({ children }: RoomingListProviderProps) => {
       appliedSearchText,
       sortOrder,
       setSortOrder,
+      runSeedData,
     }),
     [
       filteredEventsData,
@@ -215,6 +250,7 @@ export const RoomingListProvider = ({ children }: RoomingListProviderProps) => {
       appliedSearchText,
       sortOrder,
       setSortOrder,
+      runSeedData,
     ]
   );
 

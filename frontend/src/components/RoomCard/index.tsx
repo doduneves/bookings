@@ -1,8 +1,6 @@
+import { Calendar, FileCheck2 } from "lucide-react";
 import type { RoomingListItem } from "../../types";
-import {
-  findStartDate,
-  findEndDate,
-} from "../../utils/dateUtils";
+import { findStartDate, findEndDate } from "../../utils/dateUtils";
 import { CutOffBadge } from "./CutOffBadge";
 
 export interface RoomItemProps {
@@ -56,9 +54,12 @@ export const RoomCard = ({ roomingListItem }: RoomItemProps) => {
               {agreement_type.charAt(0).toUpperCase() + agreement_type.slice(1)}
             </span>
           </p>
-          <p className="text-sm text-brand-black">
-            {startDate} - {endDate}
-          </p>
+          <div className="flex items-center gap-2">
+            <Calendar width={12} />
+            <p className="text-sm text-brand-black">
+              {startDate} - {endDate}
+            </p>
+          </div>
         </div>
 
         <CutOffBadge cutOffDate={cutOffDate} />
@@ -73,20 +74,7 @@ export const RoomCard = ({ roomingListItem }: RoomItemProps) => {
           View Bookings ({numberOfBookings})
         </button>
         <button className="p-2 bg-brand-white text-brand-purple-medium-dark border border-brand-purple-medium-dark rounded-md hover:bg-brand-purple-medium-dark hover:text-white transition duration-300 flex items-center justify-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
-            />
-          </svg>
+          <FileCheck2 />
         </button>
       </div>
     </div>

@@ -18,6 +18,8 @@ interface RoomingListContextType {
   setFilterOption: (option: string) => void;
   handleSearchSubmit: () => void;
   appliedSearchText: string;
+  sortOrder: 'asc' | 'desc' | 'none';
+  setSortOrder: (order: 'asc' | 'desc' | 'none') => void;
 }
 
 const RoomingListContext = createContext<RoomingListContextType | undefined>(
@@ -50,6 +52,7 @@ export const RoomingListProvider = ({ children }: RoomingListProviderProps) => {
   const [filterOption, setFilterOption] = useState("");
   const [appliedSearchText, setAppliedSearchText] = useState("");
   const [appliedFilterOption, setAppliedFilterOption] = useState("");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc" | "none">("none");
 
   const eventsToDisplay = useMemo(() => EVENTS, []);
 
@@ -117,7 +120,7 @@ export const RoomingListProvider = ({ children }: RoomingListProviderProps) => {
         return null;
     }
   };
-  
+
   const filteredEventsData = useMemo(() => {
     let currentFilteredEvents = eventsData;
 
@@ -162,8 +165,24 @@ export const RoomingListProvider = ({ children }: RoomingListProviderProps) => {
       }
     }
 
+    if (sortOrder !== "none") {
+      currentFilteredEvents = currentFilteredEvents.map((event) => {
+        const sortedRoomingLists = [...event.roomingLists].sort((a, b) => {
+          const dateA = new Date(a.cutOffDate).getTime();
+          const dateB = new Date(b.cutOffDate).getTime();
+
+          if (sortOrder === "asc") {
+            return dateA - dateB;
+          } else {
+            return dateB - dateA;
+          }
+        });
+        return { ...event, roomingLists: sortedRoomingLists };
+      });
+    }
+
     return currentFilteredEvents;
-  }, [eventsData, appliedSearchText, appliedFilterOption]);
+  }, [eventsData, appliedSearchText, appliedFilterOption, sortOrder]);
 
   const handleSearchSubmit = () => {
     setAppliedSearchText(searchText);
@@ -181,6 +200,8 @@ export const RoomingListProvider = ({ children }: RoomingListProviderProps) => {
       setFilterOption,
       handleSearchSubmit,
       appliedSearchText,
+      sortOrder,
+      setSortOrder,
     }),
     [
       filteredEventsData,
@@ -192,6 +213,8 @@ export const RoomingListProvider = ({ children }: RoomingListProviderProps) => {
       setFilterOption,
       handleSearchSubmit,
       appliedSearchText,
+      sortOrder,
+      setSortOrder,
     ]
   );
 

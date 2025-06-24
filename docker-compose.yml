@@ -47,5 +47,21 @@ services:
     restart: always
     command: sh -c "yarn run migration:run && yarn run start:dev"
 
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: booking_frontend
+    ports:
+      - "${FE_PORT}:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - api
+    restart: always
+    command: yarn dev --host 0.0.0.0
+
 volumes:
   db_data:

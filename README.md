@@ -21,6 +21,7 @@ Open .env and add your database and application configuration:
 
 ```
 PORT=3001
+FE_PORT=5173
 DB_HOST=db
 DB_PORT=5432
 DB_USER=your_db_username
@@ -41,15 +42,24 @@ To build the Docker images, run database migrations, and start all services, exe
 docker-compose up --build
 ```
 
-3. Access API Documentation
+3. Running the Frontend APP
+
+The app will be running on `http://localhost:5173/` (or change the port to FE_PORT set on .env)
+
+To request the backend API correctly, you need to create a `/frontend/.env` file with the configurations:
+```
+VITE_API_BASE_URL=http://localhost:3001 (the same port you set to backedn api on root .env)
+```
+
+4. Access API Documentation
 
 Once the API is running, you can test and explore the endpoints using the interactive Scalar documentation:
 
-Open your browser and go to: http://localhost:3001/docs
+Open your browser and go to: http://localhost:3001/docs (or whatever the PORT you've set on environment)
 ![image](https://github.com/user-attachments/assets/0bf5cce5-b2af-4f2e-a330-8e9ca9b12daf)
 
 
-4. Testing
+5. Testing
 
 You can run the Unit Tests just running the script below, inside `api` folder:
 ```

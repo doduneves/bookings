@@ -50,6 +50,9 @@ To request the backend API correctly, you need to create a `/frontend/.env` file
 ```
 VITE_API_BASE_URL=http://localhost:3001 (the same port you set to backedn api on root .env)
 ```
+![image](https://github.com/user-attachments/assets/6efc7dd7-2940-4db6-844b-e7d5e7b827d9)
+![image](https://github.com/user-attachments/assets/4d7a7fec-1d37-47a9-a443-ae6993575fd9)
+
 
 4. Access API Documentation
 

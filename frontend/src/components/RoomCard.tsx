@@ -1,33 +1,4 @@
-export interface BookingItem {
-  bookingId: string;
-  hotelId: number;
-  eventId: number;
-  guestName: string;
-  guestPhoneNumber: string;
-  checkInDate: string;
-  checkOutDate: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface RoomingListItem {
-  roomingListId: string;
-  eventId: number;
-  hotelId: number;
-  rfpName: string;
-  cutOffDate: string;
-  status: string;
-  agreement_type: string;
-  createdAt: string;
-  updatedAt: string;
-  bookings: BookingItem[];
-}
-
-export interface EventData {
-  id: number;
-  name: string;
-  roomingLists: RoomingListItem[];
-}
+import type { RoomingListItem, BookingItem } from "../types";
 
 export interface RoomItemProps {
   roomingListItem: RoomingListItem;
@@ -94,6 +65,10 @@ export const RoomCard = ({ roomingListItem }: RoomItemProps) => {
   const startDate = findStartDate(bookings);
   const endDate = findEndDate(bookings);
 
+  const handleViewBookingsClick = () => {
+    console.log(rfpName, bookings);
+  };
+
   return (
     <div
       className={`w-full md:w-[calc((100%-2rem)/3)] p-4 bg-brand-white rounded-lg border border-brand-gray flex flex-col justify-between mb-4 flex-shrink-0`}
@@ -128,7 +103,11 @@ export const RoomCard = ({ roomingListItem }: RoomItemProps) => {
       </div>
 
       <div className="flex items-center mt-auto gap-2">
-        <button className="px-4 py-2 bg-brand-purple-medium-dark text-white rounded-md hover:bg-opacity-90 transition duration-300">
+        <button
+          className="px-4 py-2 bg-brand-purple-medium-dark text-white rounded-md hover:bg-opacity-90 transition duration-300"
+          onClick={handleViewBookingsClick}
+        >
+          {" "}
           View Bookings ({numberOfBookings})
         </button>
         <button className="p-2 bg-brand-white text-brand-purple-medium-dark border border-brand-purple-medium-dark rounded-md hover:bg-brand-purple-medium-dark hover:text-white transition duration-300 flex items-center justify-center">

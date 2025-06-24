@@ -1,4 +1,4 @@
-import type { RoomingListItem } from "./RoomCard";
+import type { RoomingListItem } from "../types";
 import { RoomingLists } from "./RoomingLists";
 
 interface EventRoomListProps {

@@ -1,4 +1,5 @@
-import { RoomCard, type RoomingListItem } from "./RoomCard";
+import type { RoomingListItem } from "../types";
+import { RoomCard } from "./RoomCard";
 
 export interface RoomingListsProps {
   roomingLists: RoomingListItem[];
